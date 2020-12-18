@@ -45,8 +45,9 @@ def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f8
     items_dict = {}
     i = 0
     for name in rseries['data']:
-        ritems = requests.get(f'https://oc2-index.library.ubc.ca/collections/{str(name)}', params=params).json()['data']
-        items_dict[i] = [name, ritems['title'], ritems['description'], ritems['items']]
+        ritems = requests.get(f'https://oc2-index.library.ubc.ca/collections/{str(name)}', params=params)
+        ritems_json = ritems.json()['data']
+        items_dict[i] = [name, ritems_json['title'], ritems_json['description'], ritems_json['items']]
         if i == 0:
             print(f'The status of the second request is: {ritems.status_code}.  Please wait. \n')
         if i == round(len(rseries['data'])/2):

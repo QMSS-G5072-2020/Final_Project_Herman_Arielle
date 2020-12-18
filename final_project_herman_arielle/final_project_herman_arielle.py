@@ -7,8 +7,7 @@ def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f8
     with a full list of the collections and a second endpoint with metadata (full name, number of items, and brief
     description).  If the user does not enter an api key, the function returns a warning message suggesting that the user
     register for a private api key.  This function can optionally accept searches for specific collections, and returns
-    whether or not they are in the
-    full list.
+    whether or not they are in the full list.  Finally, this function automatically cleans the descriptions of html jargon.
     
     Parameters:
     *searches (str): any character string.
@@ -24,6 +23,13 @@ def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f8
     
     """
     # 1. api_key
+    import requests
+    import os
+    import pandas as pd
+    import json
+    import numpy as np
+    import time
+    
     if api_key=="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f81f893c5ab709cec63c6c":
         print('This function utilizes the British Columbia Library public API Key by default, '
               'which limits requests to 10 per minute. '
@@ -41,18 +47,23 @@ def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f8
     for name in rseries['data']:
         ritems = requests.get(f'https://oc2-index.library.ubc.ca/collections/{str(name)}', params=params).json()['data']
         items_dict[i] = [name, ritems['title'], ritems['description'], ritems['items']]
+        if i == 0:
+            print(f'The status of the second request is: {ritems.status_code}.  Please wait. \n')
+        if i == round(len(rseries['data'])/2):
+            print('Halfway there!')
+            time.sleep(10)
         i += 1
-     
-    # 4. check
-    for search in searches:
-        if search in ritems['title'] or search in rseries['data'].any():
-            print(f'{search} is a currently listed collection. \n')
-        else:
-            print(f'{search} is not a current collection in the University of British Columbia Library. \n'
-                  'Please check your spelling or check the output to see available collections.')    
         
     items_df = pd.DataFrame.from_dict(items_dict, orient='index',
                                       columns=['CollectionID','CollectionName', 'description', 'items'])
     items_clean = items_df.replace(to_replace=[r'</?(p|span|title|i|a)(\s(class|style)="\w*\W*?.?")?>|\r\n|&#\d{1,5}'], value=[''], regex=True)
-    
+     
+    # 4. check
+    for search in searches:
+        if (items_clean['CollectionID'] == search).any() == True or (items_clean['CollectionName'] == search).any() == True:
+            print(f'{search} is a currently listed collection. \n')
+        else:
+            print(f'{search} is not a current collection in the University of British Columbia Library. \n'
+                  'Please check your spelling or check the output to see available collections.')    
+                
     return items_clean

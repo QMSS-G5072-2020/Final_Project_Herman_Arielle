@@ -5,7 +5,7 @@ import json
 import numpy as np
 import time
 
-def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f81f893c5ab709cec63c6c"):
+def collections(*searches, api_key = "ac40e6c2cb345593ed1691e0a8b601bba398e42d85f81f893c5ab709cec63c6c"):
     """
     Returns a complete list of the current collections in the British Columbia University Library with some metadata
     and whether or not specific items are in the list.

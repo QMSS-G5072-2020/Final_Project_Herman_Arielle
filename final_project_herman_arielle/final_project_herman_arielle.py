@@ -38,7 +38,7 @@ def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f8
     # 3. get metadata
     items_dict = {}
     i = 0
-    for name in rseries['data'][:10]:
+    for name in rseries['data']:
         ritems = requests.get(f'https://oc2-index.library.ubc.ca/collections/{str(name)}', params=params).json()['data']
         items_dict[i] = [name, ritems['title'], ritems['description'], ritems['items']]
         i += 1

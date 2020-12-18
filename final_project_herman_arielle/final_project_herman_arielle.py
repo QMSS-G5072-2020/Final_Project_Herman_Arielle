@@ -33,6 +33,8 @@ def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f8
     if api_key=="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f81f893c5ab709cec63c6c":
         print('This function utilizes the British Columbia Library public API Key by default, '
               'which limits requests to 10 per minute. ')
+    for search in searches:
+        assert isinstance(search, str), "Please enter search term as a string."
     assert isinstance(api_key, str), "Please enter your api_key as a string."
     params = {'api_key': api_key}
     
@@ -69,15 +71,11 @@ def collections(*searches, api_key="ac40e6c2cb345593ed1691e0a8b601bba398e42d85f8
     
     # 4. check if optional argument in collections
     for search in searches:
-        if isinstance(search, str):
-            if (items_clean['CollectionID'] == search).any() == True or (items_clean['CollectionName'] == search).any() == True:
-                print(f'{search} is a currently listed collection. \n')
-            else:
-                print(f'{search} is not a current collection in the University of British Columbia Library. \n'
-                      'Please check your spelling or check the output to see available collections. \n' )
+        if (items_clean['CollectionID'] == search).any() == True or (items_clean['CollectionName'] == search).any() == True:
+            print(f'{search} is a currently listed collection. \n')
         else:
-            print(f'Cannot parse search term: {search}.  Please enter search term as a string.')
-        
+            print(f'{search} is not a current collection in the University of British Columbia Library. \n'
+                  'Please check your spelling or check the output to see available collections. \n' )        
     return items_clean
 
 
